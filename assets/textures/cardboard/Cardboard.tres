@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" load_steps=5 format=3 uid="uid://qsgdk2h81geu"]
+
+[ext_resource type="Texture2D" uid="uid://rrtinr13y3l7" path="res://assets/textures/cardboard/color.png" id="1_fppp5"]
+[ext_resource type="Texture2D" uid="uid://c0882ofs8h8g6" path="res://assets/textures/cardboard/displacement.png" id="2_keb08"]
+[ext_resource type="Texture2D" uid="uid://dwssu1cufre0e" path="res://assets/textures/cardboard/normal.png" id="3_e3p7m"]
+[ext_resource type="Texture2D" uid="uid://dellrnqxx6wir" path="res://assets/textures/cardboard/roughness.png" id="4_vmqoy"]
+
+[resource]
+albedo_texture = ExtResource("1_fppp5")
+roughness_texture = ExtResource("4_vmqoy")
+normal_enabled = true
+normal_texture = ExtResource("3_e3p7m")
+heightmap_enabled = true
+heightmap_texture = ExtResource("2_keb08")

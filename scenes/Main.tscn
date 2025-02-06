@@ -1,0 +1,167 @@
+[gd_scene load_steps=11 format=3 uid="uid://dhs5m5i072l1f"]
+
+[ext_resource type="Script" path="res://addons/sky_3d/src/Sky3D.gd" id="1_u1k4d"]
+[ext_resource type="Terrain3DMaterial" uid="uid://w5fselohowoy" path="res://data/Material.tres" id="2_v4rrf"]
+[ext_resource type="Script" path="res://addons/sky_3d/src/Skydome.gd" id="2_ya7n7"]
+[ext_resource type="Terrain3DAssets" uid="uid://br034h8sli16a" path="res://data/Assets.tres" id="3_6hytq"]
+[ext_resource type="Script" path="res://addons/sky_3d/src/TimeOfDay.gd" id="3_g23vr"]
+[ext_resource type="PackedScene" uid="uid://f7hodvnl7px2" path="res://components/Rocket.tscn" id="6_dvl7w"]
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_gh086"]
+use_debanding = false
+
+[sub_resource type="Sky" id="Sky_nsax2"]
+sky_material = SubResource("PhysicalSkyMaterial_gh086")
+
+[sub_resource type="Environment" id="Environment_khs3j"]
+background_mode = 2
+sky = SubResource("Sky_nsax2")
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+reflected_light_source = 2
+tonemap_mode = 3
+tonemap_white = 6.0
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_m6ao0"]
+
+[node name="Main" type="Node3D"]
+
+[node name="Sky3D" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_khs3j")
+camera_attributes = SubResource("CameraAttributesPractical_m6ao0")
+script = ExtResource("1_u1k4d")
+enable_editor_time = false
+current_time = 12.0
+
+[node name="SunLight" type="DirectionalLight3D" parent="Sky3D"]
+transform = Transform3D(0, -0.999464, -0.0327504, -0.628456, -0.0254747, 0.777428, -0.777845, 0.0205822, -0.628119, -0.0327503, 0.777428, -0.628119)
+shadow_enabled = true
+
+[node name="MoonLight" type="DirectionalLight3D" parent="Sky3D"]
+transform = Transform3D(0, -0.501152, -0.865359, 0.788412, -0.532324, 0.308283, -0.615148, -0.682259, 0.395114, -0.865359, 0.308283, 0.395114)
+light_color = Color(0.572549, 0.776471, 0.956863, 1)
+light_energy = 0.0
+shadow_enabled = true
+
+[node name="Skydome" type="Node" parent="Sky3D"]
+script = ExtResource("2_ya7n7")
+sky_visible = true
+dome_radius = 10.0
+tonemap_level = 0.0
+exposure = 1.3
+ground_color = Color(0.3, 0.3, 0.3, 1)
+sky_layers = 4
+sky_render_priority = -128
+horizon_level = 0.0
+sun_altitude = 38.9743
+sun_azimuth = 182.985
+sun_disk_color = Color(0.996094, 0.541334, 0.140076, 1)
+sun_disk_intensity = 2.0
+sun_disk_size = 0.015
+sun_light_path = NodePath("../SunLight")
+sun_light_color = Color(1, 1, 1, 1)
+sun_horizon_light_color = Color(0.98, 0.523, 0.294, 1)
+sun_light_energy = 1.0
+moon_altitude = 136.127
+moon_azimuth = 0.703216
+moon_color = Color(1, 1, 1, 1)
+moon_size = 0.07
+enable_set_moon_texture = false
+moon_resolution = 2
+moon_light_path = NodePath("../MoonLight")
+moon_light_color = Color(0.572549, 0.776471, 0.956863, 1)
+moon_light_energy = 0.3
+deep_space_euler = Vector3(1.29154, 3.14159, 1.31353)
+background_color = Color(0.709804, 0.709804, 0.709804, 0.854902)
+set_background_texture = false
+stars_field_color = Color(1, 1, 1, 1)
+set_stars_field_texture = false
+stars_scintillation = 0.75
+stars_scintillation_speed = 0.01
+atm_quality = 1
+atm_wavelenghts = Vector3(680, 550, 440)
+atm_darkness = 0.5
+atm_sun_intensity = 18.0
+atm_day_tint = Color(0.807843, 0.909804, 1, 1)
+atm_horizon_light_tint = Color(0.980392, 0.635294, 0.462745, 1)
+atm_enable_moon_scatter_mode = false
+atm_night_tint = Color(0.168627, 0.2, 0.25098, 1)
+atm_level_params = Vector3(1, 0, 0)
+atm_thickness = 0.7
+atm_mie = 0.07
+atm_turbidity = 0.001
+atm_sun_mie_tint = Color(1, 1, 1, 1)
+atm_sun_mie_intensity = 1.0
+atm_sun_mie_anisotropy = 0.8
+atm_moon_mie_tint = Color(0.137255, 0.184314, 0.292196, 1)
+atm_moon_mie_intensity = 0.7
+atm_moon_mie_anisotropy = 0.8
+fog_visible = true
+fog_atm_level_params_offset = Vector3(0, 0, -1)
+fog_density = 0.00015
+fog_rayleigh_depth = 0.116
+fog_mie_depth = 0.0001
+fog_falloff = 3.0
+fog_start = 0.0
+fog_end = 1000.0
+fog_layers = 524288
+fog_render_priority = 123
+clouds_thickness = 1.7
+clouds_coverage = 0.5
+clouds_absorption = 2.0
+clouds_sky_tint_fade = 0.5
+clouds_intensity = 10.0
+clouds_size = 2.0
+clouds_uv = Vector2(0.16, 0.11)
+clouds_direction = Vector2(0.25, 0.25)
+clouds_speed = 0.07
+set_clouds_texture = false
+clouds_cumulus_visible = true
+clouds_cumulus_day_color = Color(0.823529, 0.87451, 1, 1)
+clouds_cumulus_horizon_light_color = Color(0.98, 0.43, 0.15, 1)
+clouds_cumulus_night_color = Color(0.090196, 0.094118, 0.129412, 1)
+clouds_cumulus_thickness = 0.0243
+clouds_cumulus_coverage = 0.55
+clouds_cumulus_absorption = 2.0
+clouds_cumulus_noise_freq = 2.7
+clouds_cumulus_intensity = 1.0
+clouds_cumulus_mie_intensity = 1.0
+clouds_cumulus_mie_anisotropy = 0.206
+clouds_cumulus_size = 0.5
+clouds_cumulus_direction = Vector3(0.25, 0.1, 0.25)
+clouds_cumulus_speed = 0.05
+set_clouds_cumulus_texture = false
+environment = SubResource("Environment_khs3j")
+
+[node name="TimeOfDay" type="Node" parent="Sky3D"]
+script = ExtResource("3_g23vr")
+update_in_editor = false
+dome_path = NodePath("../Skydome")
+system_sync = false
+total_cycle_in_minutes = 15.0
+total_hours = 12.0
+day = 3
+month = 1
+year = 2025
+celestials_calculations = 1
+compute_moon_coords = true
+compute_deep_space_coords = true
+latitude = 16.0
+longitude = 108.0
+utc = 7.0
+celestials_update_time = 0.0
+
+[node name="Terrain3D" type="Terrain3D" parent="."]
+data_directory = "res://data"
+material = ExtResource("2_v4rrf")
+assets = ExtResource("3_6hytq")
+show_checkered = true
+top_level = true
+metadata/_edit_lock_ = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.935617, -0.353018, 0, 0.353018, 0.935617, 0, 0.335272, 5.6)
+
+[node name="Rocket" parent="." instance=ExtResource("6_dvl7w")]
+max_force = 100.0
+throttle = 1.0
