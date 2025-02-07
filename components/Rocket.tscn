@@ -1,20 +1,56 @@
-[gd_scene load_steps=6 format=3 uid="uid://f7hodvnl7px2"]
+[gd_scene load_steps=12 format=3 uid="uid://chipx2tjg2f0q"]
 
-[ext_resource type="Script" path="res://scripts/Rocket.gd" id="1_jy1gu"]
+[ext_resource type="Script" path="res://scripts/rocket/Rocket.gd" id="1_jy1gu"]
 [ext_resource type="PackedScene" uid="uid://bp5stefk8a1xv" path="res://assets/models/rocket/rocket.glb" id="1_rhg52"]
-[ext_resource type="Script" path="res://scripts/RocketEngine.gd" id="3_ilxbb"]
+[ext_resource type="Script" path="res://scripts/rocket/RocketEngine.gd" id="3_ilxbb"]
+[ext_resource type="Shader" path="res://assets/shaders/EngineExhaust.gdshader" id="4_1ken2"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_qf4g8"]
+
+[sub_resource type="Curve" id="Curve_6d0li"]
+_data = [Vector2(0, 0.1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_pkwsc"]
 height = 1.4
 radius = 0.05
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_c282q"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_aj264"]
+seamless = true
+noise = SubResource("FastNoiseLite_c282q")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cvgjv"]
+render_priority = 0
+shader = ExtResource("4_1ken2")
+shader_parameter/model_height = 3.0
+shader_parameter/dissolve_start = 0.001
+shader_parameter/dissolve_length = 1.0
+shader_parameter/gradient_bias = 1.0
+shader_parameter/noise_speed = 1.0
+shader_parameter/noise_strength = 0.1
+shader_parameter/stretch_factor = 0.6
+shader_parameter/flame_color = Vector3(1, 0.5, 0)
+shader_parameter/inner_color = Vector3(1, 0.8, 0.4)
+shader_parameter/emission_strength = 2.0
+shader_parameter/throttle = 1.0
+shader_parameter/idle_emission = 0.2
+shader_parameter/idle_noise = 0.5
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_aj264")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_my4i2"]
+material = SubResource("ShaderMaterial_cvgjv")
+top_radius = 0.075
+bottom_radius = 0.0
+height = 1.0
+
 [node name="Rocket" type="RigidBody3D"]
 mass = 0.113
 physics_material_override = SubResource("PhysicsMaterial_qf4g8")
-continuous_cd = true
+gravity_scale = -8.0
 script = ExtResource("1_jy1gu")
+throttle_curve = SubResource("Curve_6d0li")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
@@ -22,5 +58,9 @@ shape = SubResource("CylinderShape3D_pkwsc")
 
 [node name="Rocket" parent="." instance=ExtResource("1_rhg52")]
 
-[node name="Engine" type="Node3D" parent="."]
+[node name="RocketEngine" type="Node3D" parent="."]
 script = ExtResource("3_ilxbb")
+
+[node name="Exhaust" type="MeshInstance3D" parent="RocketEngine"]
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, -9.74238e-05, -0.422481, 0)
+mesh = SubResource("CylinderMesh_my4i2")

@@ -1,11 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://dhs5m5i072l1f"]
+[gd_scene load_steps=16 format=3 uid="uid://dhs5m5i072l1f"]
 
 [ext_resource type="Script" path="res://addons/sky_3d/src/Sky3D.gd" id="1_u1k4d"]
 [ext_resource type="Terrain3DMaterial" uid="uid://w5fselohowoy" path="res://data/Material.tres" id="2_v4rrf"]
 [ext_resource type="Script" path="res://addons/sky_3d/src/Skydome.gd" id="2_ya7n7"]
 [ext_resource type="Terrain3DAssets" uid="uid://br034h8sli16a" path="res://data/Assets.tres" id="3_6hytq"]
 [ext_resource type="Script" path="res://addons/sky_3d/src/TimeOfDay.gd" id="3_g23vr"]
-[ext_resource type="PackedScene" uid="uid://f7hodvnl7px2" path="res://components/Rocket.tscn" id="6_dvl7w"]
+[ext_resource type="PackedScene" uid="uid://chipx2tjg2f0q" path="res://components/Rocket.tscn" id="6_dvl7w"]
+[ext_resource type="Script" path="res://scripts/camera/CameraManager.gd" id="7_j3nll"]
+[ext_resource type="Script" path="res://scripts/camera/CameraMount.gd" id="8_yqfhd"]
+[ext_resource type="Script" path="res://scripts/UI.gd" id="9_tqrtv"]
+[ext_resource type="Script" path="res://scripts/Controller.gd" id="10_xbp5v"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_gh086"]
 use_debanding = false
@@ -24,11 +28,14 @@ tonemap_white = 6.0
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_m6ao0"]
 
+[sub_resource type="Compositor" id="Compositor_irtk6"]
+
 [node name="Main" type="Node3D"]
 
 [node name="Sky3D" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_khs3j")
 camera_attributes = SubResource("CameraAttributesPractical_m6ao0")
+compositor = SubResource("Compositor_irtk6")
 script = ExtResource("1_u1k4d")
 enable_editor_time = false
 current_time = 12.0
@@ -58,7 +65,7 @@ sun_azimuth = 182.985
 sun_disk_color = Color(0.996094, 0.541334, 0.140076, 1)
 sun_disk_intensity = 2.0
 sun_disk_size = 0.015
-sun_light_path = NodePath("../SunLight")
+sun_light_path = NodePath("")
 sun_light_color = Color(1, 1, 1, 1)
 sun_horizon_light_color = Color(0.98, 0.523, 0.294, 1)
 sun_light_energy = 1.0
@@ -68,7 +75,7 @@ moon_color = Color(1, 1, 1, 1)
 moon_size = 0.07
 enable_set_moon_texture = false
 moon_resolution = 2
-moon_light_path = NodePath("../MoonLight")
+moon_light_path = NodePath("")
 moon_light_color = Color(0.572549, 0.776471, 0.956863, 1)
 moon_light_energy = 0.3
 deep_space_euler = Vector3(1.29154, 3.14159, 1.31353)
@@ -155,13 +162,132 @@ celestials_update_time = 0.0
 data_directory = "res://data"
 material = ExtResource("2_v4rrf")
 assets = ExtResource("3_6hytq")
+save_16_bit = true
+collision_mode = 3
+cull_margin = 1000.0
 show_checkered = true
 top_level = true
 metadata/_edit_lock_ = true
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.935617, -0.353018, 0, 0.353018, 0.935617, 0, 0.335272, 5.6)
+[node name="GroundFar" type="Node3D" parent="." node_paths=PackedStringArray("look_at_node")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 21)
+script = ExtResource("8_yqfhd")
+look_at_node = NodePath("../Rocket")
+
+[node name="GroundClose" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0.0575242, 1.08119)
+script = ExtResource("8_yqfhd")
+look_at_target = false
+
+[node name="GroundMed" type="Node3D" parent="." node_paths=PackedStringArray("look_at_node")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.051447, 0.998676, 3)
+script = ExtResource("8_yqfhd")
+look_at_target = false
+follow_speed = 10.0
+look_at_node = NodePath("../Rocket")
+
+[node name="CameraManager" type="Node3D" parent="." node_paths=PackedStringArray("mounts")]
+script = ExtResource("7_j3nll")
+mounts = [NodePath("../GroundClose"), NodePath("../GroundMed"), NodePath("../Rocket/EngineView"), NodePath("../Rocket/Overview"), NodePath("../Rocket/CameraAttachedDown"), NodePath("../GroundFar")]
+
+[node name="Camera" type="Camera3D" parent="CameraManager"]
 
 [node name="Rocket" parent="." instance=ExtResource("6_dvl7w")]
-max_force = 100.0
-throttle = 1.0
+physics_interpolation_mode = 1
+transform = Transform3D(0.999391, -0.0348995, 0, 0.0348995, 0.999391, 0, 0, 0, 1, 0, 0, 0)
+gravity_scale = 1.0
+
+[node name="CameraAttachedDown" type="Node3D" parent="Rocket"]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0.0519982, 0.121872)
+script = ExtResource("8_yqfhd")
+look_at_target = false
+
+[node name="Overview" type="Node3D" parent="Rocket" node_paths=PackedStringArray("look_at_node")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.051447, 0.998676, 3)
+script = ExtResource("8_yqfhd")
+disconnected_follow = true
+follow_speed = 10.0
+look_at_node = NodePath("..")
+
+[node name="EngineView" type="Node3D" parent="Rocket"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+script = ExtResource("8_yqfhd")
+
+[node name="Control" type="Control" parent="." node_paths=PackedStringArray("rocket")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("9_tqrtv")
+rocket = NodePath("../Rocket")
+
+[node name="Layout" type="VBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TopBar" type="ProgressBar" parent="Control/Layout"]
+layout_mode = 2
+
+[node name="Split" type="HBoxContainer" parent="Control/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="LeftPanel" type="VBoxContainer" parent="Control/Layout/Split"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Info" type="RichTextLabel" parent="Control/Layout/Split/LeftPanel"]
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 24
+theme_override_font_sizes/bold_font_size = 24
+bbcode_enabled = true
+text = "Flight Data"
+fit_content = true
+scroll_active = false
+
+[node name="Spacer" type="Control" parent="Control/Layout/Split/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Description" type="RichTextLabel" parent="Control/Layout/Split/LeftPanel"]
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/bold_italics_font_size = 24
+theme_override_font_sizes/italics_font_size = 24
+theme_override_font_sizes/normal_font_size = 24
+theme_override_font_sizes/bold_font_size = 24
+bbcode_enabled = true
+text = "Description"
+fit_content = true
+scroll_active = false
+
+[node name="RightPanel" type="VBoxContainer" parent="Control/Layout/Split"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Info" type="RichTextLabel" parent="Control/Layout/Split/RightPanel"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 24
+theme_override_font_sizes/bold_font_size = 24
+bbcode_enabled = true
+text = "Engine Status"
+fit_content = true
+scroll_active = false
+text_direction = 2
+
+[node name="Controller" type="Node" parent="." node_paths=PackedStringArray("camera_manager", "rocket", "ui")]
+script = ExtResource("10_xbp5v")
+camera_manager = NodePath("../CameraManager")
+rocket = NodePath("../Rocket")
+ui = NodePath("../Control")
